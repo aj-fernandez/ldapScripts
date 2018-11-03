@@ -1,0 +1,15 @@
+ldapsearch -h 192.168.2.200 -p 389 -D "cn=admin,dc=2cfs-w,dc=com" -w  Admin1234 -b "dc=2cfs-w,dc=com" "(&(sn=jensen)(l=Cupertino))" 
+
+ldapsearch -h 192.168.2.200 -p 389 -D "cn=admin,dc=2cfs-w,dc=com" -w  Admin1234 -b "dc=2cfs-w,dc=com" "(&(uidNumber=*)(gidNumber=10000))" #  allUsersLdap 
+
+ldapsearch -h 192.168.2.200 -p 389 -D "cn=admin,dc=2cfs-w,dc=com" -w  Admin1234 -b "dc=2cfs-w,dc=com" "(&(uidNumber=*)(gidNumber=10000))" | grep uidNumber # allUserLDAP and grep to only show uidNumber 
+
+parameter -LLL exclude the output comment of "ldapsearch" from the output to stdout (display or file)
+
+ldapsearch -LLL  -h 192.168.2.200 -p 389 -D "cn=admin,dc=2cfs-w,dc=com" -w  Admin1234 -b "dc=2cfs-w,dc=com" "(&(uidNumber=*)(gidNumber=10000))" | grep uidNumber | sort -k2 # allUsersLDAP without comment and ORDERED with sort -k2 :) 
+
+ldapsearch -LLL  -h 192.168.2.200 -p 389 -D "cn=admin,dc=2cfs-w,dc=com" -w  Admin1234 -b "dc=2cfs-w,dc=com" "(&(uidNumber=*)(gidNumber=10000))" | grep uidNumber | sort -k2 | cut -d: -f2 # all uidNumbers used by ldap users orderen without more stuffs 
+
+ldapsearch -LLL  -h 192.168.2.200 -p 389 -D "cn=admin,dc=2cfs-w,dc=com" -w  Admin1234 -b "dc=2cfs-w,dc=com" "(&(uidNumber=*)(gidNumber=10000))" | grep uidNumber | sort -k2 | cut -d: -f2 | tail -1 # all previous and returning only the last line that matched with the higher uidNumber, so, to i must set this command to a variable and sum 1 to set the new uidNumber for the user that im addind to LDAP --FINAL 
+
+--finished research [OK]-- 

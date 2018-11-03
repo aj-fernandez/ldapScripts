@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# @author: ajfernandez
+# @date: 27-10-18
+#
+# Using the script for create user by user "addUser" i wrote "loopUsers" for to
+# create users in batch, but we must known that "addUser" create one file per
+# user, due to this, we have to merge all of this files in one (we doing this
+# in for loop with "find" and "cat").
+#
+# Usage: #> loopUser -a numberUsers -b userNametoShow  -c departmentCommon
+#   e.g: #> loopUser -a 9 -b usuario-w -c RRHH\ Contrataciones
+#
+#	Result: usuario-w1 to usuario-w9
+
+
+readonly TARGET_FILE="./loopUsers.ldif" # for easy change of target file
+
+function help { # This function show the usage of the script and which parameters are mandatory
+    cat << EOF
+
+List of arguments:
+	-a: Number of users that we want to create (REQUIRED)
+	-b: Username generic, later the user number will be added at the end i.e Usuario-1 or Usuario-9 (REQUIRED)
+	-c: Name of users's department (REQUIRED) 
+
+Usage: #> loopUser -a numberUsers -b userNametoShow  -c departmentCommon
+  e.g: #> loopUser -a 9 -b usuario-w -c RRHH\ Contrataciones
+
+       Result: usuario-w1 to usuario-w9
+
+EOF
+
+    exit 0
+}
+
+while getopts "a:b:c:d" FLAG
+do
+	case $FLAG in
+		a)numberUsers=$OPTARG;;
+		b)userNametoShow=$OPTARG;;
+		c)departmentCommon=$OPTARG;;
+		d)help=$OPTARG;;
+	esac
+done
+
+[[  -z "$numberUsers" ]] && help # Check mandatory parameters for our object
+[[  -z "$userNametoShow" ]] && help  # If some of this variables are empty -> show usage again an exit
+[[ -z "$departmentCommon" ]] && help
+
+for (( i = 1; i <= $numberUsers; i++ )); do
+	./addUser \-u $userNametoShow"$i" \-g 10000  \-l $userNametoShow-"$i" \-p Admin1234 \-f $userNametoShow"$i" \-d $departmentCommon
+done
